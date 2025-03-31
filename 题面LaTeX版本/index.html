@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Shared Max Height Textboxes</title>
+	<style>
+		/* ...existing code... */
+		.textbox {
+			width: 300px;
+			max-height: 200px; /* shared maximum height */
+			resize: vertical;
+		}
+	</style>
+</head>
+<body>
+	<textarea id="box1" class="textbox" placeholder="Input here..."></textarea>
+	<textarea id="box2" class="textbox" placeholder="Input here..."></textarea>
+	<script>
+		// ...existing code...
+		function equalizeHeight() {
+			var box1 = document.getElementById("box1");
+			var box2 = document.getElementById("box2");
+
+			// Reset heights to recalc true content height.
+			box1.style.height = "";
+			box2.style.height = "";
+
+			var height1 = box1.scrollHeight;
+			var height2 = box2.scrollHeight;
+			var maxContentHeight = Math.max(height1, height2);
+
+			// Ensure we do not exceed the CSS max-height.
+			var cssMaxHeight = parseInt(window.getComputedStyle(box1).maxHeight, 10);
+			var newHeight = Math.min(maxContentHeight, cssMaxHeight);
+
+			box1.style.height = newHeight + "px";
+			box2.style.height = newHeight + "px";
+		}
+
+		// Bind the equalization to input events.
+		document.getElementById("box1").addEventListener("input", equalizeHeight);
+		document.getElementById("box2").addEventListener("input", equalizeHeight);
+
+		// Equalize on window load.
+		window.addEventListener("load", equalizeHeight);
+	</script>
+</body>
+</html>

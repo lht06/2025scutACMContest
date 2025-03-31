@@ -1,0 +1,119 @@
+\problemWithTimeMem{开盒达人}{2 seconds}{1024MB}
+
+高级加密标准(AES,Advanced Encryption Standard)作为主流对称加密算法，AES以16字节构成的$4\times 4$字节矩阵分组处理数据，执行10-14轮加密。(除最后一轮外)每轮操作包含：
+
+1. \textbf{轮密钥加（AddRoundKey）}：输入与轮密钥异或；
+
+2. \textbf{字节替换（SubBytes）}：通过S盒完成非线性变换，其中的S盒可逆(双射)；
+
+3. \textbf{行移位（ShiftRow）}：将$4\times 4$状态矩阵的第i行循环左移i字节；
+
+4. \textbf{列混淆（MixColumn）}：在GF($2^8$)有限域上对每列进行矩阵乘法（加法为异或，乘法按特定多项式规则）。
+
+\textbf{输入数据排布}
+
+$$
+\begin{array}{|c|c|c|c|}
+\hline
+A[0] & A[4] & A[8]  & A[12] \\
+\hline
+A[1] & A[5] & A[9]  & A[13] \\
+\hline
+A[2] & A[6] & A[10] & A[14] \\
+\hline
+A[3] & A[7] & A[11] & A[15] \\
+\hline
+\end{array}
+$$
+
+\textbf{轮密钥加}
+
+\begin{minted}{python}
+for i in range(16):
+    A[i] ^= Key[i]
+\end{minted}
+
+\textbf{字节替换}
+
+\begin{minted}{python}
+for i in range(16):
+    A[i] = S[A[i]]
+\end{minted}
+
+\textbf{行位移变换}
+
+$$
+\begin{array}{|c|c|c|c|}
+\hline
+A[0] & A[4] & A[8]  & A[12] \\
+\hline
+A[5] & A[9] & A[13]  & A[1] \\
+\hline
+A[10] & A[14] & A[2] & A[6] \\
+\hline
+A[15] & A[3] & A[7] & A[11] \\
+\hline
+\end{array}
+$$
+
+\textbf{列混淆矩阵}
+
+$$
+\begin{array}{|c|c|c|c|}
+\hline
+2 & 3 & 1 & 1 \\
+\hline
+1 & 2 & 3 & 1 \\
+\hline
+1 & 1 & 2 & 3 \\
+\hline
+3 & 1 & 1 & 2 \\
+\hline
+\end{array}
+$$
+
+\textbf{$GF(2^8)$有限域乘法实现}
+
+\begin{minted}{python}
+def gMul(a, b):
+    p = 0
+    for i in range(8):
+        if b & 1 != 0:
+            p ^= a
+        hi = a & 0x80
+        a <<= 1
+        if hi != 0:
+            a ^= 0x1b
+        b >>= 1
+    return p & 255
+\end{minted}
+
+\textbf{白盒密码背景}
+
+针对密钥可能暴露在不可信环境（如易被逆向的软件），白盒密码通过混淆轮密钥与算法逻辑，抵御内存窃取攻击，确保密钥在非安全设备中仍受保护。
+
+你作为开盒达人，最擅长破解白盒密码。下面你将得到S盒和若干组AES轮函数的输入和输出，你需要根据每对轮函数的输入和输出，还原出轮密钥（并非最后一轮）。
+
+\mysec{Input}
+
+第一行一个正整数$T\leqslant 1145$，表示有几组输入输出对。
+
+第二行$256$个16进制数字，表示S盒，保证$0\leqslant S[i]\leqslant 255$且不重复。
+
+接下来$T$行，每行$32$个16进制数字，前$16$个为输入的$16$个字节，后$16$个为输出的$16$个字节。
+
+\mysec{Output}
+
+$T$行，每行$16$个$16$进制数，表示该轮的轮密钥。
+
+\ACMIO{Sample 1}{%
+1
+
+0x63 0x7c 0x77 0x7b 0xf2 0x6b 0x6f 0xc5(后省略，具体查看oj)
+}{%
+0x3e 0xec 0xd2 0x2f 0xb4 0x91 0x77 0x2c 0x31 0xe3 0x1a 0xe5 0xba 0x9d 0x44 0x90
+}
+
+\mysec{Hint}
+
+构造对应的逆运算。

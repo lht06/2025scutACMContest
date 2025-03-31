@@ -1,0 +1,46 @@
+\problemWithTimeMem{又一个计数问题}{6 seconds}{1024MB}
+
+如果一个数字$x(0\leqslant x \leqslant 9)$在数组的每个元素的数位中都出现过，则该数字为这个数组的“主导数字”。例如数组\verb|[3015 1398 301]|有主导数字1和3。
+给定$l,r,n,d$，请你统计满足以下条件的严格递增数组$X=[X_1,X_2,...,X_n]$的数量：
+
+1.数组长度为$n$。
+
+2.数组恰好有$d$个主导数字。
+
+3.满足$l\leqslant X_1<X_2<...<X_n\leqslant r$。
+
+由于符合条件的数组数量可能非常多，所以答案对$10^9+7$取模。
+
+\mysec{Input}
+
+第一行包含一个整数 $T$($1 \leqslant T \leqslant 1000$  ),接下来是$T$个测试样例。
+
+对于每个测试样例，输入一行四个整数$l,r,n,d$。($1\leqslant l \leqslant r\leqslant 10^{18},2\leqslant n \leqslant 10,0\leqslant d\leqslant 10$)
+
+\mysec{Output}
+
+对于每个测试样例，输入一行一个数字表示所求答案，答案对$10^9+7$取模。
+
+\ACMIO{Sample 1}{%
+5
+
+1 6 2 0
+
+12 31 2 2
+
+9 38 3 2
+
+6 31 2 2
+
+6 23 4 0
+}{%
+15
+
+2
+
+0
+
+2
+
+2725
+}
